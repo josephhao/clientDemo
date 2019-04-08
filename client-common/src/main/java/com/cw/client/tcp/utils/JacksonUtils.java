@@ -1,13 +1,16 @@
-package com.cwiz.utils;
+package com.cw.client.tcp.utils;
 
 
-import org.apache.htrace.fasterxml.jackson.core.JsonProcessingException;
-
-import org.apache.htrace.fasterxml.jackson.core.type.TypeReference;
-import org.apache.htrace.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 
+
+/**
+ * @author cw
+ */
 public class JacksonUtils {
 
      public  static String toJson(Object obj){

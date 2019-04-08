@@ -1,2 +1,2 @@
 Manifest-Version: 1.0
-Main-Class: com.cwiz.client.hbase.HBaseClient
+Main-Class: com.cw.client.tcp.hbase.HBaseClient

@@ -1,4 +1,4 @@
-package com.cwiz.client.hbase;
+package com.cw.client.tcp.hbase;
 
 
 import org.apache.hadoop.conf.Configuration;
@@ -6,27 +6,27 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hbase.*;
 import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.util.Bytes;
-import org.apache.hadoop.yarn.webapp.hamlet.Hamlet;
+
 import org.apache.htrace.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.htrace.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.htrace.fasterxml.jackson.databind.ObjectWriter;
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
+
 
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
+import java.math.BigInteger;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
  * knowledge :
  * 1. even if the hbase data is stored in the local place
- *    with the parameter {hbase.rootdir}:"file:///Users/cwiz/hbase/data",
+ *    with the parameter {hbase.rootdir}:"file:///Users/cw/hbase/data",
  *    we still need the compatible hadoop jar to perform
  *    the function of storing.
  *
+ * @author joseph
  */
 
 public class HBaseClient implements Closeable {
@@ -39,11 +39,10 @@ public class HBaseClient implements Closeable {
     protected String cf_delete = "delete";
 
 
-
     {
         this.hbaseConfig = HBaseConfiguration.create();
 
-//        hbaseConfig.set("hbase.zookeeper.quorum", "192.168.8.104");
+//        hbaseConfig.set("hbase.zookeeper.quorum", "192.168.1.104");
 //        hbaseConfig.set("hbase.zookeeper.property.clientPort", "2181");
         if (System.getProperty("HBASE_CONF_DIR") != null) {
             hbaseConfig.addResource(new Path(System.getProperty("HBASE_CONF_DIR"), "hbase-site.xml"));
@@ -68,9 +67,7 @@ public class HBaseClient implements Closeable {
         }
     }
 
-    public HBaseClient(){
-
-    }
+    public HBaseClient(){ }
 
     public void createTable(String tableName,Configuration conf, String... columnFamilyNames) {
         System.out.println("start create table "+tableName);
@@ -93,6 +90,36 @@ public class HBaseClient implements Closeable {
         }
         System.out.println("end create table "+tableName);
     }
+
+    public boolean createTable(Admin admin, HTableDescriptor table, byte[][]
+            splits)
+            throws IOException {
+        try {
+            admin.createTable( table, splits );
+            return true;
+        } catch (TableExistsException e) {
+//            logger.info("table " + table.getNameAsString() + " already exists");
+
+//          the table already exists...
+            return false;
+        }
+    }
+
+    public byte[][] getHexSplits(String startKey, String endKey, int numRegions) {
+        byte[][] splits = new byte[numRegions - 1][];
+        BigInteger lowestKey = new BigInteger(startKey, 16);
+        BigInteger highestKey = new BigInteger(endKey, 16);
+        BigInteger range = highestKey.subtract(lowestKey);
+        BigInteger regionIncrement = range.divide(BigInteger.valueOf(numRegions));
+        lowestKey = lowestKey.add(regionIncrement);
+        for (int i = 0; i < numRegions - 1; i++) {
+            BigInteger key = lowestKey.add(regionIncrement.multiply(BigInteger.valueOf(i)));
+            byte[] b = String.format("%016x", key).getBytes();
+            splits[i] = b;
+        }
+        return splits;
+    }
+
 
     public TableName getTableName(String tableName){
         return TableName.valueOf(tableName);
@@ -125,7 +152,6 @@ public class HBaseClient implements Closeable {
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
-
         }
 
         //System.out.println(put.toString());
@@ -187,6 +213,7 @@ public class HBaseClient implements Closeable {
         scan.addColumn(cf, qualifier);
 
         scan.setRowPrefixFilter(rowPrefix);
+        scan.setBatch(10);
         ResultScanner rs = table.getScanner(scan);
         try {
             for (Result r = rs.next(); r != null; r = rs.next()) {
@@ -203,7 +230,7 @@ public class HBaseClient implements Closeable {
         Cell[] cells = result.rawCells();
         System.out.println();
         System.out.println(result.toString());
-        if(result.isEmpty()) {
+        if(!result.isEmpty()) {
 
             for (Cell cell : cells) {
                 System.out.println(Bytes.toString(CellUtil.cloneRow(cell)) + " , "
@@ -230,7 +257,7 @@ public class HBaseClient implements Closeable {
     public static void main(String[] args) {
         HBaseClient hBaseClient = new HBaseClient();
         hBaseClient.createTable(hBaseClient.tableName,
-                hBaseClient.hbaseConfig ,
+                hBaseClient.hbaseConfig,
                 hBaseClient.cf_create,
                 hBaseClient.cf_delete);
         Map<String, Object>  keyValue = new HashMap<String, Object>();
@@ -238,7 +265,7 @@ public class HBaseClient implements Closeable {
         keyValue.put(hBaseClient.cf_create+":c2", "v2");
         String rowkey = "row1";
         try {
-            hBaseClient.doPut(hBaseClient.tableName , rowkey, keyValue);
+            hBaseClient.doPut(hBaseClient.tableName, rowkey, keyValue);
         } catch (IOException e) {
             e.printStackTrace();
         }
