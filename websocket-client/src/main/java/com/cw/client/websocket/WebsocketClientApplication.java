@@ -1,13 +1,12 @@
 package com.cw.client.websocket;
 
 
-import com.cw.client.websocket.utils.MyWebsocketClient;
 
+
+import com.cw.websocket.client.MyWebsocketClient;
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+
 
 
 import java.net.URI;
@@ -41,8 +40,8 @@ public class WebsocketClientApplication {
     public static void sendMsg() throws URISyntaxException {
         final String pre = "gbid_";
         String gbid = pre + "1";
-        URI uri = new URI("ws://20.1.120.192:8012/facecenter/phoneWebsocket/" + gbid);
-//        URI uri = new URI("ws://localhost:8002/facecenter/phoneWebsocket/" + gbid);
+//        URI uri = new URI("ws://20.1.120.192:8012/facecenter/phoneWebsocket/" + gbid);
+        URI uri = new URI("ws://localhost:8014/websocket/" + gbid);
 //        URI uri = new URI("ws://192.168.3.83:8000/facecenter/phoneWebsocket/" + gbid);
 
         MyWebsocketClient client = new MyWebsocketClient(uri, gbid);
@@ -97,12 +96,7 @@ public class WebsocketClientApplication {
 //            while (read != 1) {
 //                read = System.in.read();
 //            }
-            log.error("createCount " + MyWebsocketClient.createCount.get()
-                    + "\n openCount " + MyWebsocketClient.openCount.get()
-                    + "\n msgCount " + MyWebsocketClient.msgCount.get()
-                    + "\n errorCount " + MyWebsocketClient.errorCount.get()
-                    + "\n closeCount " + MyWebsocketClient.closeCount.get()
-            );
+            log.error("createCount "     );
             for (MyWebsocketClient client1 : clientObjectMap.keySet()) {
                 try {
                     client1.close();
