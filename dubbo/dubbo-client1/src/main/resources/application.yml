@@ -1,0 +1,73 @@
+
+
+
+#ok:
+#  http:
+#    connect-timeout: 120s
+#    read-timeout: 300s
+#    write-timeout: 60s
+#  # 连接池中整体的空闲连接的最大数量
+#    max-idle-connections: 200
+#  # 连接空闲时间最多为 300 秒
+#    keep-alive-duration: 300s
+
+server:
+  port: 9011
+  servlet:
+    context-path: /client1
+spring:
+  application:
+    name: client1
+#  datasource:
+#    username: root
+##    password: 1qazXSW@
+#    password: 123456
+#    url: jdbc:mysql://localhost:3306/pic-import?useUnicode=true&characterEncoding=utf-8&serverTimeZone=Hongkong&allowMultiQueries=true
+##    url: jdbc:mysql://51.92.63.16:3306/taxi_pic?useUnicode=true&characterEncoding=utf-8&serverTimeZone=Hongkong&allowMultiQueries=true
+#    type: com.zaxxer.hikari.HikariDataSource
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#
+#    hikari:
+#      minimum-idle: 10
+#      idle-timeout: 600000
+#      maximum-pool-size: 30
+#      auto-commit: true
+#      pool-name: ${spring.application.name}_hikari_pool
+#      connection-test-query: select 1
+#      connection-timeout: 30000
+#      max-lifetime: 3600000
+#  transaction:
+#    rollback-on-commit-failure: true
+#
+#mybatis:
+#  mapper-locations: classpath:com/sensing/hutubi/mapper/*.xml
+#  configuration:
+#    map-underscore-to-camel-case: true
+#    use-generated-keys: true
+#    use-column-label: true
+#    use-actual-param-name: true
+
+
+# dubbo 方法二 配置
+dubbo:
+  application:
+    name: ${spring.application.name}
+  registry:
+    protocol: zookeeper
+    address: 192.168.93.128:2181
+
+  protocol:
+    name: rmi
+    port: 20881
+    transporter: netty
+
+
+logger:
+  level: info
+  path: /data/log/client1
+  console:
+    level: info
+
+
+logging:
+  config: classpath:logback-spring.xml

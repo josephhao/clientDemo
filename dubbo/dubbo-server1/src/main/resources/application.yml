@@ -1,0 +1,67 @@
+
+#  pool:
+#    core-pool-size: 8
+#    max-pool-size: 12
+#    keep-alive-time-in-millis: 30000
+#    queue-capacity: 200
+
+#ok:
+#  http:
+#    connect-timeout: 120s
+#    read-timeout: 300s
+#    write-timeout: 60s
+#  # 连接池中整体的空闲连接的最大数量
+#    max-idle-connections: 3
+#  # 连接空闲时间最多为 300 秒
+#    keep-alive-duration: 300s
+
+server:
+  port: 9012
+  servlet:
+    context-path: /server1
+
+spring:
+  application:
+    name: server1
+#  kafka:
+#    producer:
+#      acks: all
+#      #可配置多个kafka节点地址用','分隔
+#      bootstrap-servers: 192.168.3.3:9092
+#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+#      value-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
+#      retries: 5
+#      client-id: pic-sender
+#      batch-size: 3
+
+
+# dubbo 方法二 配置
+dubbo:
+  server: true
+  application:
+   name: server1
+  registry:
+    address: 192.168.93.128:2181
+    protocol: zookeeper
+
+  protocol:
+    name: rmi
+    port: 20880
+    transporter: netty
+  monitor:
+    protocol: registry
+
+
+
+logger:
+  level: info
+  path: /data/log/server1
+  console:
+    level: info
+
+logging:
+  config: classpath:logback-spring.xml
+
+
+
+
