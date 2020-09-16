@@ -16,13 +16,13 @@
 #    keep-alive-duration: 300s
 
 server:
-  port: 9012
+  port: 9014
   servlet:
-    context-path: /server1
+    context-path: /client2
 
 spring:
   application:
-    name: server1
+    name: client2
 #  kafka:
 #    producer:
 #      acks: all
@@ -33,30 +33,33 @@ spring:
 #      retries: 5
 #      client-id: pic-sender
 #      batch-size: 3
+# dubbo 方法一 配置
+  dubbo:
+    scan: dubbo.service
+    application:
+     name: ${spring.application.name}
+    registry:
+      address: 192.168.93.128:2181
+      protocol: zookeeper
 
+    protocol:
+      name: rmi
+      port: 20883
+      transporter: netty
+      threadpool: fixed
+      threads: 1
+      queue: 100
+      parameters:
+        threadname: dubbo-client2
 
-# dubbo 方法二 配置
-dubbo:
-  server: true
-  application:
-   name: server1
-  registry:
-    address: 192.168.93.128:2181
-    protocol: zookeeper
-    server: netty
-
-  protocol:
-    name: rmi
-    port: 20880
-    transporter: netty
-  monitor:
-    protocol: registry
+    monitor:
+      protocol: registry
 
 
 
 logger:
   level: info
-  path: /data/log/server1
+  path: /data/log/dubbo-server2
   console:
     level: info
 

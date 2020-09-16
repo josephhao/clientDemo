@@ -16,6 +16,8 @@
         <module>dubbo-server1</module>
         <module>client1</module>
         <module>dubbo-client1</module>
+        <module>dubbo-server2</module>
+        <module>dubbo-client2</module>
     </modules>
     <packaging>pom</packaging>
 
