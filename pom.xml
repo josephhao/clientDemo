@@ -25,6 +25,7 @@
         <module>websocket-server</module>
         <module>websocket-client</module>
         <module>dubbo</module>
+        <module>two-kafka</module>
     </modules>
     <properties>
         <java.version>1.8</java.version>
