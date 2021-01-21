@@ -24,7 +24,8 @@ public class ClientMain {
     public static void main(String[] args) {
         Bootstrap bootstrap = new Bootstrap();
         NioEventLoopGroup workers = new NioEventLoopGroup();
-        ChannelFuture future = bootstrap.group(workers)
+        try {
+            ChannelFuture future = bootstrap.group(workers)
                 .channel(NioSocketChannel.class)
                 .handler(new ChannelInitializer<NioSocketChannel>() {
                     @Override
@@ -35,12 +36,13 @@ public class ClientMain {
                                 .addLast(new ClientChannelHandler());
                     }
                 })
-                .connect(new InetSocketAddress(9000));
+                .connect(new InetSocketAddress(9000)).sync();
 
-        try {
-            ChannelFuture sync = future.sync();
+            future.channel().closeFuture().sync();
         } catch (InterruptedException e) {
             e.printStackTrace();
+        } finally {
+//            workers.shutdownGracefully();
         }
     }
 }

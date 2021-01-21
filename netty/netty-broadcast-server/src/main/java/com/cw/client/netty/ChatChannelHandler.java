@@ -7,12 +7,13 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
+import io.netty.util.CharsetUtil;
 import io.netty.util.concurrent.GlobalEventExecutor;
 
 import java.util.Date;
 
 @ChannelHandler.Sharable
-public class ChatChannelHandler extends SimpleChannelInboundHandler<ByteBuf> {
+public class ChatChannelHandler extends SimpleChannelInboundHandler<String> {
     private static ChannelGroup channelGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 
     @Override
@@ -25,7 +26,7 @@ public class ChatChannelHandler extends SimpleChannelInboundHandler<ByteBuf> {
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
         Channel channel = ctx.channel();
         channelGroup.forEach(channel1 -> {
             if (channel == channel1) {

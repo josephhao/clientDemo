@@ -24,29 +24,36 @@ public class ServerMain {
         ServerBootstrap serverBootstrap = new ServerBootstrap();
         NioEventLoopGroup boss = new NioEventLoopGroup(1);
         NioEventLoopGroup workers = new NioEventLoopGroup();
-        ChannelFuture future = serverBootstrap.group(boss, workers)
-                .channel(NioServerSocketChannel.class)
-                .childHandler(new ChannelInitializer<SocketChannel>() {
-                    @Override
-                    protected void initChannel(SocketChannel ch) throws Exception {
-                        ch.pipeline()
-                                .addLast(new StringDecoder())
-                                .addLast(new StringEncoder())
-                                .addLast(new ChatChannelHandler());
-                    }
-                })
-                .bind(new InetSocketAddress(9000));
+        try {
+            ChannelFuture future = serverBootstrap.group(boss, workers)
+                    .channel(NioServerSocketChannel.class)
+                    .childHandler(new ChannelInitializer<SocketChannel>() {
+                        @Override
+                        protected void initChannel(SocketChannel ch) throws Exception {
+                            ch.pipeline()
+                                    .addLast(new StringDecoder())
+                                    .addLast(new StringEncoder())
+                                    .addLast(new ChatChannelHandler());
+                        }
+                    })
+                    .bind(new InetSocketAddress(9000));
 
-        ChannelFuture sync = future.addListener(new ChannelFutureListener() {
-            @Override
-            public void operationComplete(ChannelFuture channelFuture) throws Exception {
-                if(channelFuture.isSuccess()) {
-                    System.out.println("======= started =======");
-                } else {
-                    Throwable cause = channelFuture.cause();
-                    System.out.println(cause);
+            ChannelFuture sync = future.addListener(new ChannelFutureListener() {
+                @Override
+                public void operationComplete(ChannelFuture channelFuture) throws Exception {
+                    if (channelFuture.isSuccess()) {
+                        System.out.println("======= started =======");
+                    } else {
+                        Throwable cause = channelFuture.cause();
+                        System.out.println(cause);
+                    }
                 }
-            }
-        }).syncUninterruptibly();
+            }).syncUninterruptibly();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            boss.shutdownGracefully();
+            workers.shutdownGracefully();
+        }
     }
 }
