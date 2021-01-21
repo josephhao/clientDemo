@@ -13,6 +13,7 @@ import io.netty.util.concurrent.GlobalEventExecutor;
 import java.util.Date;
 
 @ChannelHandler.Sharable
+//server 泛型 String , ByteBuf 均可， client 只能接收String， 为什么？
 public class ChatChannelHandler extends SimpleChannelInboundHandler<String> {
     private static ChannelGroup channelGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 
