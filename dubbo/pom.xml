@@ -14,7 +14,6 @@
     <modules>
         <module>dubbo-api</module>
         <module>dubbo-server1</module>
-        <module>client1</module>
         <module>dubbo-client1</module>
         <module>dubbo-server2</module>
         <module>dubbo-client2</module>
@@ -42,11 +41,7 @@
             <artifactId>fastjson</artifactId>
             <version>1.2.62</version>
         </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <!--<version>1.18.12</version>-->
-        </dependency>
+
         <dependency>
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java</artifactId>
